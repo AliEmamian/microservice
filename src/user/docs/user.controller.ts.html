@@ -1,0 +1,259 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> user.controller.ts</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Namespaces</h3><ul><li><a href="user.html">user</a></li></ul><h3>Classes</h3><ul><li><a href="user.UserController.html">UserController</a></li></ul><h3><a href="global.html">Global</a></h3></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>user.controller.ts</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @namespace user
+ */
+import {
+  Controller, Inject, UseInterceptors,
+  UseFilters,
+  ValidationPipe,
+  UsePipes,
+  HttpStatus,
+} from '@nestjs/common';
+import { GrpcMethod, RpcException } from '@nestjs/microservices';
+import { CreateUserReq, CreateUserRes, FindRequest, FindRes, RemoveUserRes, User_SERVICE_NAME, UpdateUserRes, FindAllRes, UpdateUserReq } from './user.pb';
+import { CreateUserDto } from './dto/create-user.dto';
+import { FindIdUserDto } from './dto/find-id-user.dto';
+
+import { UserService } from './user.service';
+import { GetUserDto } from './dto/get-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+//import { ExceptionFilter } from './rpc-exception-filter';
+
+
+// import { ResponseInterceptor } from 'src/common/interceptors/response.interceptor';
+// import { ErrorFilter } from 'src/common/filters/errors.filter';
+// import { AdminMessage } from './enums/messages.enum';
+
+
+/**
+  * @class UserController  
+  * @memberof user
+  * @description کلاس کنترلر مربوط به عملیات کراد برای مدیریت کاربران در گیت وی
+  */
+@Controller('user')
+// @UseFilters(ErrorFilter)
+//@UsePipes(ValidationPipe)
+export class UserController {
+
+  @Inject(UserService)
+  private readonly service: UserService;
+  /**
+     * @typedef CreateUserReq
+     * @param {string} name   
+     * @param {string} nationalCode   
+     * @param {number} age   
+     * @param {string} address   
+     */
+  /**
+  * @typedef User
+  * @param {string} id   
+  * @param {string} name   
+  * @param {string} nationalCode   
+  * @param {number} age   
+  * @param {string} address   
+  */
+  /**
+   * @memberof user.UserController
+   * @summary متد ایجاد کاربر جدید
+   * @param {CreateUserReq}payload ورودی برای ایجاد کاربر جدید
+   * @returns User
+   */
+  //@UseFilters(new ExceptionFilter())
+  @GrpcMethod(User_SERVICE_NAME, 'createUser')
+  private async createUser(payload: CreateUserDto): Promise&lt;CreateUserRes> {
+    try {
+      let res = await this.service.create(payload);;
+      return res;
+    } catch (e) {
+      console.log(">>>>>", e)
+      throw new RpcException(e)
+
+    }
+  }
+
+  /**
+     * @typedef FindOne
+     * @param {string} name   
+     * @param {string} nationalCode   
+     * @param {number} age   
+     * @param {string} address   
+     */
+  /**
+     * @typedef FindRes
+     * @param {FindOne} data   
+     * @param {number} status   
+     * @param {Array} error   
+     */
+  /**
+    * @typedef FindAllRes
+    * @param {FindOne[]} data   
+    * @param {number} status   
+    * @param {Array} error   
+    */
+
+  /**
+    * @memberof user.UserController
+    * @summary متد دریافت اطلاعات کاربر با استفاده از شناسه  
+    * @param {number}id شناسه کاربر 
+    * @returns FindRes
+    */
+  @GrpcMethod(User_SERVICE_NAME, 'findById')
+  private findById(payload: FindIdUserDto): Promise&lt;FindRes> {
+    return this.service.findById(payload);
+  }
+
+  /**
+     * @memberof user.UserController
+     * @summary متد دریافت اطلاعات کاربر    
+     * @returns FindAllRes
+     */
+  @GrpcMethod(User_SERVICE_NAME, 'findAll')
+  private findAll(): Promise&lt;FindAllRes> {
+    return this.service.findAll();
+  }
+  /**
+     * @typedef RemoveUserRes
+     * @param {number} id   
+     * @param {number} status   
+     * @param {Array} error   
+     */
+  /**
+    * @memberof user.UserController
+    * @summary متد حذف اطلاعات کاربر با استفاده از شناسه  
+    * @param {string}id شناسه کاربر 
+    * @returns RemoveUserRes
+    */
+
+  @GrpcMethod(User_SERVICE_NAME, 'removeUser')
+  private removeUser(payload: FindIdUserDto): Promise&lt;RemoveUserRes> {
+    return this.service.remove(payload);
+  }
+  /**
+    * @memberof user.UserController
+    * @summary متد ویرایش اطلاعات کاربر با استفاده از شناسه  
+    * @param {string}id شناسه کاربر 
+    * @param {CreateUserReq}body اطلاعات ویرایش شده کاربر 
+    * @returns FindRes
+    */
+  @GrpcMethod(User_SERVICE_NAME, 'updateUser')
+  private updateUser(payload: UpdateUserReq): Promise&lt;UpdateUserRes> {
+    return this.service.update(payload);
+  }
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>
